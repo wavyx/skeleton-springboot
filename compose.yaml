@@ -1,0 +1,21 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "--silent", "http://localhost:9090/actuator/health", "|" , "grep", "UP", "||", "exit", "1" ]
+      start_period: 10s
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    ports:
+      - "9090:9090"
+      - "5005:5005"
+    volumes:
+      - ./src:/app/src
+      - ./build.gradle:/app/build.gradle
+      - ./settings.gradle:/app/settings.gradle
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
